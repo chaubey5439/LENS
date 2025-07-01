@@ -1,0 +1,52 @@
+Here's the link to open streamlit app: https://lens-2025.streamlit.app/
+
+📦 Lens Expert (LENS) — NLP Utility Suite
+LENS (Language & Expression eXpert) is a user-friendly, Streamlit-powered web application that brings the power of Machine Learning and Natural Language Processing (NLP) together to perform a variety of text analysis tasks — all in one place.
+This application provides tools like Language Detection, Restaurant Review Sentiment Analysis, Spam Classification, and a News Classifier (under development) — making it a handy utility for text classification and analysis tasks.
+
+🎯 Project Objective
+The primary goal of this project is to provide an intuitive, accessible, and efficient platform where anyone can perform common NLP tasks without diving deep into the technical complexities. Whether you're a researcher, student, or just curious about how text classification works, Lens Expert allows you to explore these functionalities through a simple interface.
+
+🛠️ Tech Stack
+Frontend & Deployment:
+Streamlit — For building interactive web interfaces
+Joblib — For model serialization and loading
+Machine Learning & NLP Libraries:
+Scikit-learn (sklearn) — Core ML algorithms
+NLTK — Text preprocessing and tokenization
+Imbalanced-learn (imblearn) — Handling imbalanced datasets
+Pandas, NumPy — Data manipulation
+Additional preprocessing and utility libraries
+
+
+🤖 Available Tools & Their Description
+1. 🌐 Language Detection
+Detect the language of any sentence or text input. Supports bulk analysis through .txt or .csv file uploads.
+
+2. ⭐ Restaurant Review Sentiment Analysis
+Classifies restaurant reviews as Positive or Negative, helping businesses or users understand customer feedback better.
+
+3. 🚫 Spam Classifier
+Distinguishes between Spam and Not Spam messages. Useful for filtering unwanted communications.
+
+4. 📰 News Classifier (Under Construction)
+An upcoming feature aimed at classifying news articles by category or identifying fake news. Stay tuned!
+
+
+✨ Features
+✔️ User-friendly interface
+✔️ Bulk file upload support for .txt and .csv
+✔️ Real-time predictions
+✔️ Deployed using Streamlit for easy access
+✔️ Built with Machine Learning & NLP models
+✔️ Future expansion planned for News Classification
+
+💡 Future Improvements
+Complete and deploy the News Classifier
+Add multilingual support for the review classifier
+Improve model accuracy with more data and advanced algorithms
+Visualize insights with interactive charts
+
+🙌 Acknowledgements
+Special thanks to the open-source community for the powerful tools like Streamlit, Scikit-learn, and NLTK that make projects like this possible.
+
