@@ -43,7 +43,7 @@ st.markdown('<div class="header">🧠 LENS eXpert (NLP Suites)</div>', unsafe_al
 
 # Sidebar with Image
 with st.sidebar:
-    st.image("D:/Ducat/PROJECT/NLP PROJECT/Models/robot_img.png", width = 180)
+    st.image("robot_img.png", width = 180)
     tool = st.radio("📂 Choose a Tool", ["🌍 Language Detection", "⭐ Restaurant Reviews", "📨 Spam Classifier", "📰 News Classifier"])
 
     st.write("")  # Adds vertical space
