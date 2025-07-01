@@ -43,11 +43,12 @@ st.markdown('<div class="header">🧠 LENS eXpert (NLP Suites)</div>', unsafe_al
 
 # Sidebar with Image
 with st.sidebar:
-    st.image("robot_img.png", width = 180)
+    st.image("robot_img.png", width=180)
     tool = st.radio("📂 Choose a Tool", ["🌍 Language Detection", "⭐ Restaurant Reviews", "📨 Spam Classifier", "📰 News Classifier"])
 
-    st.write("")  # Adds vertical space
-    st.write("")  # Add more lines if you want more space
+    st.write("")  
+    st.write("")  
+    st.write("")  
 
     with st.expander("ℹ️ More Info"):
         st.subheader("About Us")
@@ -170,12 +171,18 @@ if uploaded_file:
 
 if st.session_state.get("bulk_df") is not None:
     df = st.session_state["bulk_df"]
+    
     if tool == "🌍 Language Detection":
         df["Prediction"] = lang_model.predict(df["Text"])
+    
     elif tool == "⭐ Restaurant Reviews":
         df["Prediction"] = review_model.predict(df["Text"])
+        df["Prediction"] = df["Prediction"].map({0: "Disliked", 1: "Liked"})
+    
     elif tool == "📨 Spam Classifier":
         df["Prediction"] = spam_model.predict(df["Text"])
+        df["Prediction"] = df["Prediction"].replace({"ham": "Not Spam"})
+    
     else:
         st.warning("Bulk upload not available for News Classifier.")
         df = None
