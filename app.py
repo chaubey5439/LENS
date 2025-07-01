@@ -182,6 +182,7 @@ if st.session_state.get("bulk_df") is not None:
     elif tool == "📨 Spam Classifier":
         df["Prediction"] = spam_model.predict(df["Text"])
         df["Prediction"] = df["Prediction"].replace({"ham": "Not Spam"})
+        df["Prediction"] = df["Prediction"].replace({"spam": "Spam"})
     
     else:
         st.warning("Bulk upload not available for News Classifier.")
