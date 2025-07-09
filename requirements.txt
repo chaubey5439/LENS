@@ -1,5 +1,3 @@
 joblib 
 imblearn
-streamlit
 requests
-os
