@@ -229,7 +229,7 @@ elif tool == "🎬 Movie Recommender":
                     with col:
                         st.markdown('<div class="movie-block">', unsafe_allow_html=True)
                         if path:
-                            st.image(path, use_column_width=True)
+                            st.image(path, use_container_width=True)
                         else:
                             st.markdown('<div style="color:#aaa;">🎞️ Poster not available</div>', unsafe_allow_html=True)
                         st.markdown(f'<div class="movie-title">🎬 {title}</div>', unsafe_allow_html=True)
