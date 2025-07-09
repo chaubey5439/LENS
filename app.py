@@ -229,13 +229,20 @@ elif tool == "🎬 Movie Recommender":
                     with col:
                         st.markdown('<div class="movie-block">', unsafe_allow_html=True)
                         if path:
-                            st.markdown(f'<img src="{path}" class="poster-img">', unsafe_allow_html=True)
+                            st.image(path, use_column_width=True)
                         else:
                             st.markdown('<div style="color:#aaa;">🎞️ Poster not available</div>', unsafe_allow_html=True)
                         st.markdown(f'<div class="movie-title">🎬 {title}</div>', unsafe_allow_html=True)
-                        if info:
-                            st.markdown(f'<div class="movie-info">⭐ {info.get("imdbRating", "N/A")}<br>🎭 {info.get("Genre", "N/A")}<br>📅 {info.get("Year", "N/A")}</div>', unsafe_allow_html=True)
+                        st.markdown(
+                            f'<div class="movie-info">'
+                            f'⭐ {info.get("imdbRating", "N/A")}<br>'
+                            f'🎭 {info.get("Genre", "N/A")}<br>'
+                            f'📅 {info.get("Year", "N/A")}'
+                            f'</div>',
+                            unsafe_allow_html=True
+                        )
                         st.markdown('</div>', unsafe_allow_html=True)
+
 
 # ---------------- Footer ----------------
 st.markdown('<div class="footer">🚀 Built with Streamlit, ML, and Good Vibes!</div>', unsafe_allow_html=True)
