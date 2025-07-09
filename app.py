@@ -89,7 +89,7 @@ st.markdown("""
 
     .poster-img {
         width: 100px;
-        height: auto;
+        height: 120px;
         border-radius: 6px;
         margin-bottom: 8px;
     }
