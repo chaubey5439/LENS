@@ -88,10 +88,10 @@ st.markdown("""
     }
 
     .poster-img {
-        width: 120px;
+        width: 100px;
         height: auto;
-        border-radius: 8px;
-        margin-bottom: 10px;
+        border-radius: 6px;
+        margin-bottom: 8px;
     }
 
     .movie-block {
