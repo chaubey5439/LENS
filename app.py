@@ -4,6 +4,9 @@ import random
 import time
 import pandas as pd
 from poster_down import download_posters
+import requests
+from PIL import Image
+from io import BytesIO
 
 # Load models
 lang_model = joblib.load("Language_detection.pkl")
@@ -13,7 +16,7 @@ vectorizer = joblib.load("vectorizer.pkl")
 nn_model = joblib.load("nearest_neighbors.pkl")
 movie_df = pd.read_csv("final_movies_data.csv")
 
-# Fun facts (updated with movie facts)
+# Fun facts
 fun_facts = [
     "🌍 Over 7,000 languages are spoken worldwide!",
     "🤖 ML is just advanced pattern recognition!",
@@ -23,7 +26,7 @@ fun_facts = [
     "📰 News classification helps filter fake news!",
     "🎬 The first movie ever made was 'Roundhay Garden Scene' in 1888!",
     "🍿 The most expensive movie ever made is 'Pirates of the Caribbean: On Stranger Tides'!",
-    "🎞️ The longest film ever made is over 85 hours long!",
+    "🎮 The longest film ever made is over 85 hours long!",
     "🏆 The Oscars were first held in 1929, with just 12 categories.",
     "🎥 The word 'movie' comes from 'moving pictures'.",
     "🎬 Bollywood produces over 1,500 films per year—more than Hollywood!",
@@ -36,94 +39,83 @@ st.set_page_config(page_title="LENS eXpert (NLP Suites)", page_icon="🧠", layo
 
 # CSS Styling
 st.markdown("""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
-
-    html, body, [class*="css"] {
-        font-family: 'Inter', sans-serif;
-        background-color: #121212;
-        color: #f0f0f0;
-    }
-
-    .header {
-        background: linear-gradient(90deg, #8e2de2, #4a00e0);
-        padding: 25px;
-        border-radius: 15px;
-        text-align: center;
-        color: white;
-        font-size: 34px;
-        font-weight: bold;
-        margin-bottom: 30px;
-    }
-
-    .section {
-        background-color: #1e1e1e;
-        padding: 25px;
-        border-radius: 15px;
-        margin-top: 10px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        color: #ffffff;
-    }
-
-    .result {
-        background-color: #00f2c3;
-        padding: 15px;
-        border-radius: 12px;
-        font-size: 19px;
-        color: #000;
-        margin-top: 20px;
-        font-weight: bold;
-    }
-
-    .fun-fact {
-        background: linear-gradient(to right, #43e97b, #38f9d7);
-        color: #121212;
-        padding: 12px 20px;
-        border-radius: 50px;
-        text-align: center;
-        font-size: 16px;
-        width: fit-content;
-        margin: 15px auto 10px auto;
-        font-weight: bold;
-    }
-
-    .poster-img {
-        width: 100px;
-        height: 90px;
-        border-radius: 6px;
-        margin-bottom: 8px;
-    }
-
-    .movie-block {
-        text-align: center;
-        margin-bottom: 30px;
-        background-color: #1f1f1f;
-        padding: 15px;
-        border-radius: 12px;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.3);
-    }
-
-    .movie-title {
-        font-weight: 700;
-        margin-top: 8px;
-        font-size: 15px;
-        color: #00f2c3;
-    }
-
-    .movie-info {
-        font-size: 13px;
-        color: #ccc;
-        line-height: 1.4;
-    }
-
-    .footer {
-        margin-top: 30px;
-        text-align: center;
-        font-size: 14px;
-        color: #888;
-        padding-bottom: 20px;
-    }
-    </style>
+<style>
+html, body, [class*="css"] {
+    font-family: 'Inter', sans-serif;
+    background-color: #121212;
+    color: #f0f0f0;
+}
+.header {
+    background: linear-gradient(90deg, #8e2de2, #4a00e0);
+    padding: 25px;
+    border-radius: 15px;
+    text-align: center;
+    color: white;
+    font-size: 34px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+.section {
+    background-color: #1e1e1e;
+    padding: 25px;
+    border-radius: 15px;
+    margin-top: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    color: #ffffff;
+}
+.result {
+    background-color: #00f2c3;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 19px;
+    color: #000;
+    margin-top: 20px;
+    font-weight: bold;
+}
+.fun-fact {
+    background: linear-gradient(to right, #43e97b, #38f9d7);
+    color: #121212;
+    padding: 12px 20px;
+    border-radius: 50px;
+    text-align: center;
+    font-size: 16px;
+    width: fit-content;
+    margin: 15px auto 10px auto;
+    font-weight: bold;
+}
+.poster-img {
+    width: 100px;
+    height: 90px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+.movie-block {
+    text-align: center;
+    margin-bottom: 30px;
+    background-color: #1f1f1f;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+.movie-title {
+    font-weight: 700;
+    margin-top: 8px;
+    font-size: 15px;
+    color: #00f2c3;
+}
+.movie-info {
+    font-size: 13px;
+    color: #ccc;
+    line-height: 1.4;
+}
+.footer {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 14px;
+    color: #888;
+    padding-bottom: 20px;
+}
+</style>
 """, unsafe_allow_html=True)
 
 st.markdown('<div class="header">🧠 LENS eXpert (NLP Suites)</div>', unsafe_allow_html=True)
@@ -138,7 +130,6 @@ with st.sidebar:
         "📰 News Classifier",
         "🎬 Movie Recommender"
     ])
-
     with st.expander("ℹ️ More Info"):
         st.subheader("About Us")
         st.write("""
@@ -150,8 +141,7 @@ with st.sidebar:
 
 # Fun fact rotation
 if tool == "🎬 Movie Recommender":
-    # Pick movie-related fun fact only
-    movie_facts = [fact for fact in fun_facts if "🎬" in fact or "🎥" in fact or "🍿" in fact or "🏆" in fact]
+    movie_facts = [fact for fact in fun_facts if any(tag in fact for tag in ["🎬", "🎥", "🍿", "🏆"])]
     st.session_state.current_fact = random.choice(movie_facts)
 
 if 'last_update' not in st.session_state:
@@ -177,19 +167,41 @@ if tool == "🌍 Language Detection":
         else:
             st.warning("Please enter a sentence.")
 
+    uploaded_file = st.file_uploader("📤 Upload CSV with at least 1 column (Text)")
+    if uploaded_file and st.button("📊 Detect in File"):
+        df = pd.read_csv(uploaded_file)
+        if df.shape[1] < 1:
+            st.error("CSV must contain at least one column.")
+        else:
+            text_col = df.columns[0]
+            df['prediction'] = lang_model.predict(df[text_col])
+            st.dataframe(df[[text_col, 'prediction']])
+            csv = df.to_csv(index=False).encode('utf-8')
+            st.download_button("📥 Download Results", data=csv, file_name='language_predictions.csv', mime='text/csv')
+
 elif tool == "⭐ Restaurant Reviews":
     st.markdown('<div class="section">⭐ <strong>Review Sentiment Analyzer</strong></div>', unsafe_allow_html=True)
     text = st.text_area("📝 Enter review text:")
     if st.button("🔍 Analyze Review"):
         if text.strip():
             pred = review_model.predict([text])[0]
-            if str(pred).lower() in ["1", "positive"]:
-                st.markdown(f'<div class="result">😄 Positive Review!</div>', unsafe_allow_html=True)
-                st.balloons()
-            else:
-                st.markdown(f'<div class="result">😞 Negative Review</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="result">{"😄 Liked" if str(pred) == "1" else "😞 Disliked"}</div>', unsafe_allow_html=True)
+            if str(pred) == "1": st.balloons()
         else:
             st.warning("Please enter a review.")
+
+    uploaded_file = st.file_uploader("📤 Upload CSV with at least 1 column (Text)")
+    if uploaded_file and st.button("📊 Analyze File"):
+        df = pd.read_csv(uploaded_file)
+        if df.shape[1] < 1:
+            st.error("CSV must contain at least one column.")
+        else:
+            text_col = df.columns[0]
+            df['prediction'] = review_model.predict(df[text_col])
+            df['prediction'] = df['prediction'].apply(lambda x: "Liked" if str(x) == "1" else "Disliked")
+            st.dataframe(df[[text_col, 'prediction']])
+            csv = df.to_csv(index=False).encode('utf-8')
+            st.download_button("📥 Download Results", data=csv, file_name='review_predictions.csv', mime='text/csv')
 
 elif tool == "📨 Spam Classifier":
     st.markdown('<div class="section">📬 <strong>Spam Detection</strong></div>', unsafe_allow_html=True)
@@ -197,13 +209,24 @@ elif tool == "📨 Spam Classifier":
     if st.button("⚡ Detect Spam"):
         if text.strip():
             pred = spam_model.predict([text])[0]
-            if pred == "spam":
-                st.markdown('<div class="result">⚠️ SPAM</div>', unsafe_allow_html=True)
-            else:
-                st.markdown('<div class="result">✅ Not Spam</div>', unsafe_allow_html=True)
-                st.balloons()
+            result = "⚠️ SPAM" if str(pred) == "1" or str(pred).lower() == "spam" else "✅ Not Spam"
+            st.markdown(f'<div class="result">{result}</div>', unsafe_allow_html=True)
+            if "Not Spam" in result: st.balloons()
         else:
             st.warning("Please enter a message.")
+
+    uploaded_file = st.file_uploader("📤 Upload CSV with at least 1 column (Text)")
+    if uploaded_file and st.button("📊 Detect in File"):
+        df = pd.read_csv(uploaded_file)
+        if df.shape[1] < 1:
+            st.error("CSV must contain at least one column.")
+        else:
+            text_col = df.columns[0]
+            df['prediction'] = spam_model.predict(df[text_col])
+            df['prediction'] = df['prediction'].apply(lambda x: "Spam" if str(x) == "1" or str(x).lower() == "spam" else "Not Spam")
+            st.dataframe(df[[text_col, 'prediction']])
+            csv = df.to_csv(index=False).encode('utf-8')
+            st.download_button("📥 Download Results", data=csv, file_name='spam_predictions.csv', mime='text/csv')
 
 elif tool == "📰 News Classifier":
     st.markdown('<div class="section">📰 <strong>News Classifier</strong></div>', unsafe_allow_html=True)
@@ -213,7 +236,6 @@ elif tool == "🎬 Movie Recommender":
     st.markdown('<div class="section">🎬 <strong>Movie Recommender</strong></div>', unsafe_allow_html=True)
     movie_name = st.selectbox("🎥 Choose a movie", sorted(movie_df['name'].unique()))
     api_key = "a6185303"
-
     if st.button("Recommend"):
         idx = movie_df[movie_df['name'].str.lower() == movie_name.lower()].index[0]
         tag_vec = vectorizer.transform([movie_df.loc[idx, 'tag']]).toarray()
@@ -229,7 +251,15 @@ elif tool == "🎬 Movie Recommender":
                     with col:
                         st.markdown('<div class="movie-block">', unsafe_allow_html=True)
                         if path:
-                            st.image(path, use_container_width=True)
+                            try:
+                                if path.startswith("http"):
+                                    response = requests.get(path)
+                                    img = Image.open(BytesIO(response.content))
+                                    st.image(img, width=120)
+                                else:
+                                    st.image(path, width=120)
+                            except Exception as e:
+                                st.markdown('<div style="color:#aaa;">⚠️ Failed to load poster</div>', unsafe_allow_html=True)
                         else:
                             st.markdown('<div style="color:#aaa;">🎞️ Poster not available</div>', unsafe_allow_html=True)
                         st.markdown(f'<div class="movie-title">🎬 {title}</div>', unsafe_allow_html=True)
@@ -237,12 +267,10 @@ elif tool == "🎬 Movie Recommender":
                             f'<div class="movie-info">'
                             f'⭐ {info.get("imdbRating", "N/A")}<br>'
                             f'🎭 {info.get("Genre", "N/A")}<br>'
-                            f'📅 {info.get("Year", "N/A")}'
-                            f'</div>',
+                            f'📅 {info.get("Year", "N/A")}</div>',
                             unsafe_allow_html=True
                         )
                         st.markdown('</div>', unsafe_allow_html=True)
 
-
-# ---------------- Footer ----------------
+# Footer
 st.markdown('<div class="footer">🚀 Built with Streamlit, ML, and Good Vibes!</div>', unsafe_allow_html=True)
